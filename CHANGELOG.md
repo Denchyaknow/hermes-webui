@@ -3,6 +3,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- **Context compression no longer silently rebuilds the model's context from the old transcript.** After a long session compressed its context, the next turn's model-facing context could be repopulated with stale, uncompressed `state.db` rows — the failure mode behind #4249's "compression did nothing" token/cache behavior. State.db replay after compacted context now requires a timestamp-verified compression anchor before splicing in newer rows; if the anchor is missing, has no timestamp, or doesn't match a timestamped state row, reconciliation fails closed to the compacted context instead of replaying stale history. The visible transcript is unaffected. Thanks @franksong2702. (#4695, part of #4249)
+
 ## [v0.51.586] — 2026-06-22 — Release US (eliminate iOS button tap delay)
 
 ### Fixed
