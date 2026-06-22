@@ -3,6 +3,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- **Streaming is fast again — the reasoning chip no longer fires a `GET /api/reasoning` request per token (#4650).** A regression from v0.51.141 made the composer's reasoning-effort chip refetch its status on every routine UI sync, so during a streamed reply the topbar refresh issued one request per token; on configs where that endpoint is slow (a large `config.yaml`), throughput collapsed to ~2 tok/s. The chip now serves its cached state on routine syncs and only refetches when the model/provider changes (or on an explicit pick), and `config.yaml` parsing is memoized (keyed on the file's mtime/size, with env-var expansion still applied live per read) so repeated reads no longer re-parse the whole file. Reported by @batkuip.
+
 ## [v0.51.569] — 2026-06-22 — Release UB (mobile drawer fixes)
 
 ### Fixed
