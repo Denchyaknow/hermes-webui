@@ -16,6 +16,62 @@ to receive fixes and features from `nesquena/hermes-webui`.
 - LAN service: `/home/edgesecure/.config/systemd/user/hermes-webui.service`
 - Current LAN bind defaults: `0.0.0.0:8787`
 
+## Dencho Rules
+
+Keep the remotes split by responsibility:
+
+- `upstream/master` is the original Hermes Web UI branch.
+- `origin/edgetower` is the EdgeTower product branch.
+- `feature/*` branches are where EdgeTower features should be built.
+
+Before starting new work, update EdgeTower from Hermes:
+
+```bash
+cd /home/edgesecure/EdgeTower
+git checkout edgetower
+git fetch upstream
+git merge upstream/master
+git push origin edgetower
+```
+
+Create feature branches from `edgetower`:
+
+```bash
+git checkout edgetower
+git checkout -b feature/agent-swarm-dashboard
+```
+
+After committing feature work, push the branch:
+
+```bash
+git push -u origin feature/agent-swarm-dashboard
+```
+
+When the feature is ready, merge it back into `edgetower`:
+
+```bash
+git checkout edgetower
+git merge feature/agent-swarm-dashboard
+git push origin edgetower
+```
+
+If upstream moved while a feature branch was open, update `edgetower` first,
+then merge `edgetower` into the feature branch:
+
+```bash
+git checkout edgetower
+git fetch upstream
+git merge upstream/master
+git push origin edgetower
+
+git checkout feature/agent-swarm-dashboard
+git merge edgetower
+```
+
+Do not commit EdgeTower product changes directly to `master`. Keep custom work
+on `edgetower` and feature branches so upstream Hermes updates stay easy to
+merge.
+
 ## Getting Started
 
 EdgeTower is currently deployed as a Linux-hosted LAN web server. The dashboard
