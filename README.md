@@ -11,7 +11,7 @@ to receive fixes and features from `nesquena/hermes-webui`.
 
 - Local checkout: `/home/edgesecure/EdgeTower`
 - Custom branch: `edgetower`
-- Fork remote (`origin`): `https://github.com/Denchyaknow/hermes-webui.git`
+- Fork remote (`origin`): `https://github.com/Denchyaknow/EdgeTower.git`
 - Upstream remote (`upstream`): `https://github.com/nesquena/hermes-webui.git`
 - LAN service: `/home/edgesecure/.config/systemd/user/hermes-webui.service`
 - Current LAN bind defaults: `0.0.0.0:8787`
