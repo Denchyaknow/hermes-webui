@@ -1,3 +1,141 @@
+# EdgeTower
+
+EdgeTower is the EdgeSecure LAN dashboard branch of Hermes Web UI. This
+checkout is reserved for EdgeSecure customizations, starting with an agent swarm
+dashboard that can be reached from the local network.
+
+This branch tracks the upstream Hermes Web UI project so EdgeTower can continue
+to receive fixes and features from `nesquena/hermes-webui`.
+
+## EdgeSecure Branch Notes
+
+- Local checkout: `/home/edgesecure/EdgeTower`
+- Custom branch: `edgetower`
+- Fork remote (`origin`): `https://github.com/Denchyaknow/hermes-webui.git`
+- Upstream remote (`upstream`): `https://github.com/nesquena/hermes-webui.git`
+- LAN service: `/home/edgesecure/.config/systemd/user/hermes-webui.service`
+- Current LAN bind defaults: `0.0.0.0:8787`
+
+## Getting Started
+
+EdgeTower is currently deployed as a Linux-hosted LAN web server. The dashboard
+runs on port `8787` and uses the existing Hermes Agent state on this machine.
+
+### Linux
+
+From the EdgeTower checkout:
+
+```bash
+cd /home/edgesecure/EdgeTower
+git checkout edgetower
+```
+
+Run the web server in the foreground for local testing:
+
+```bash
+HERMES_WEBUI_HOST=127.0.0.1 HERMES_WEBUI_PORT=8787 ./start.sh --foreground
+```
+
+Then open the dashboard on the same machine:
+
+```text
+http://localhost:8787
+```
+
+For the managed LAN service on this EdgeSecure host, use systemd:
+
+```bash
+systemctl --user start hermes-webui.service
+systemctl --user status hermes-webui.service
+```
+
+The service is configured to launch:
+
+```text
+/home/edgesecure/EdgeTower/start.sh --foreground
+```
+
+Useful service commands:
+
+```bash
+systemctl --user restart hermes-webui.service
+systemctl --user stop hermes-webui.service
+journalctl --user -u hermes-webui.service -f
+```
+
+### Linux LAN Hosting
+
+To host EdgeTower on the local network, bind the web server to all interfaces:
+
+```bash
+HERMES_WEBUI_HOST=0.0.0.0 HERMES_WEBUI_PORT=8787 ./start.sh --foreground
+```
+
+On this machine, the installed user service already uses:
+
+```text
+HERMES_WEBUI_HOST=0.0.0.0
+HERMES_WEBUI_PORT=8787
+EnvironmentFile=/home/edgesecure/.config/hermes-webui-lan.env
+```
+
+Find the LAN address:
+
+```bash
+hostname -I
+```
+
+Then open the dashboard from another computer or phone on the same Wi-Fi/LAN:
+
+```text
+http://<server-lan-ip>:8787
+```
+
+Example for the current host:
+
+```text
+http://192.168.2.11:8787
+```
+
+Mobile viewing uses the same LAN URL. Make sure the phone is connected to the
+same network as the EdgeTower host, then open the LAN URL in the phone browser.
+If the dashboard is not reachable, check that the service is active and that the
+host firewall allows inbound TCP traffic on port `8787`.
+
+### Windows
+
+Native Windows setup is not the current EdgeTower target.
+
+### Windows WSL2 Stub
+
+Use WSL2 as the Linux runtime, then follow the Linux commands above inside the
+WSL2 distro. For automatic startup from Windows login, use the upstream WSL2
+guide at [`docs/wsl-autostart.md`](docs/wsl-autostart.md) and replace any
+Hermes WebUI repo path with:
+
+```text
+/home/edgesecure/EdgeTower
+```
+
+When exposing WSL2-hosted EdgeTower to other LAN devices, verify Windows
+firewall and WSL networking rules before relying on mobile access.
+
+## Updating From Upstream
+
+To pull upstream Hermes Web UI updates into EdgeTower:
+
+```bash
+cd /home/edgesecure/EdgeTower
+git checkout edgetower
+git fetch upstream
+git merge upstream/master
+git push origin edgetower
+```
+
+The original Hermes Web UI README continues below for upstream documentation.
+
+---
+
 # Hermes Web UI
 
 [Hermes Agent](https://hermes-agent.nousresearch.com/) is a sophisticated autonomous agent that lives on your server, accessed via a terminal or messaging apps, that remembers what it learns and gets more capable the longer it runs.
@@ -112,8 +250,9 @@ ecosystem. See [docs/why-hermes.md](docs/why-hermes.md) for the full side-by-sid
 Run the repo bootstrap:
 
 ```bash
-git clone https://github.com/nesquena/hermes-webui.git hermes-webui
-cd hermes-webui
+git clone https://github.com/nesquena/hermes-webui.git EdgeTower
+cd EdgeTower
+git checkout -b edgetower origin/master
 python3 bootstrap.py
 ```
 
